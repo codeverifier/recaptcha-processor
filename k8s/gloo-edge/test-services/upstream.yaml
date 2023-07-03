@@ -1,0 +1,25 @@
+apiVersion: gloo.solo.io/v1
+kind: Upstream
+metadata:
+  name: recaptcha-client-upstream
+  namespace: gloo-system
+spec:
+  kube:
+    selector:
+      app: recaptcha-client
+    serviceName: recaptcha-client
+    serviceNamespace: apps
+    servicePort: 8000
+---
+apiVersion: gloo.solo.io/v1
+kind: Upstream
+metadata:
+  name: recaptcha-backend-upstream
+  namespace: gloo-system
+spec:
+  kube:
+    selector:
+      app: recaptcha-backend
+    serviceName: recaptcha-backend
+    serviceNamespace: apps
+    servicePort: 8001

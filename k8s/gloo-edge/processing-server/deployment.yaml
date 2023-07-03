@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recaptcha-processing-server
+spec:
+  selector:
+    matchLabels:
+      app: recaptcha-processing-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: recaptcha-processing-server
+    spec:
+      containers:
+        - name: recaptcha-processing-server
+          image: australia-southeast1-docker.pkg.dev/field-engineering-apac/public-repo/recaptcha-processor:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9091
+          env:
+            - name: SERVER_HOST
+              value: "0.0.0.0"
+            - name: SERVER_PORT
+              value: "9091"
+            # Setting to `true` enables enterprise, `false` non-enterprise
+            - name: ENABLE_ENTERPRISE
+              value: "true"
+            # --------------------------------------------------------------------------------
+            # Enterprise reCAPTCHA variables
+            - name: CAPTCHA_SITE_KEY
+              value: "<site key>"
+            - name: GOOGLE_ADC_PROJECT_ID
+              value: "field-engineering-apac"
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/etc/gcp/application-credentials.json"
+            # --------------------------------------------------------------------------------
+            # Only useful for non-enterprise reCAPTCHA
+            #- name: CAPTCHA_SHARED_KEY
+            #  value: "<secret key>"
+            #- name: VERIFY_CAPTCHA_GOOGLE_API
+            #  value: "https://www.google.com/recaptcha/api/siteverify"
+            # --------------------------------------------------------------------------------
+            - name: ACCEPTABLE_SCORE_THRESHOLD
+              value: "0.5"
+          volumeMounts:
+            - name: google-application-credentials-vol
+              mountPath: /etc/gcp
+              readOnly: true
+      volumes:
+        - name: google-application-credentials-vol
+          secret:
+            secretName: google-application-credentials
+            items:
+              - key: application-credentials.json
+                path: application-credentials.json
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recaptcha-processing-server
+  labels:
+      app: recaptcha-processing-server
+spec:
+  ports:
+    - name: http
+      port: 9001
+      protocol: TCP
+      targetPort: 9091
+  selector:
+    app: recaptcha-processing-server

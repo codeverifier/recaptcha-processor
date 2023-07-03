@@ -1,0 +1,23 @@
+apiVersion: enterprise.gloo.solo.io/v1
+kind: AuthConfig
+metadata:
+  name: passthrough-auth
+  namespace: gloo-system
+spec:
+  booleanExpr: apiKey && captchaProc
+  configs:
+    - name: apiKey
+      apiKeyAuth:
+        headerName: x-api-key
+        labelSelector:
+          team: test
+    - name: captchaProc
+      passThroughAuth:
+        http:
+          # Address of the http auth server to query
+          url: http://recaptcha-processing-server.recaptcha.svc.cluster.local:9001/captcha-verify
+          # Set a connection timeout to external service, default is 5 seconds
+          connectionTimeout: 3s
+          request:
+            allowedHeaders:
+              - x-recaptcha-token

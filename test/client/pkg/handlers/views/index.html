@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>reCAPTCHA Client</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" integrity="sha512-t4GWSVZO1eC8BM339Xd7Uphw5s17a86tIZIj8qRxhnKub6WoyhnrxeCIMeAqBPgdZGlCcG2PrZjMc+Wr78+5Xg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link href="assets/css/style.css" rel="stylesheet">
+
+	<script src='https://www.google.com/recaptcha/enterprise.js?render={{ .SiteKey }}'></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js" integrity="sha512-3dZ9wIrMMij8rOH7X3kLfXAzwtcHpuYpEgQg1OA4QAob1e81H8ntUQmQm3pBudqIoySO5j0tHN4ENzA6+n2r4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+	<div class="main-container">
+		<div class="row h-100 justify-content-center">
+			<div class="col-sm-5 align-self-center">
+				<div class="card-block mx-auto button-card">
+					<p class="text-center text-muted"><strong>Registration Form</strong></p>
+					<div class="card-body form-style">
+						<form id="user-form" action="" method="">
+							<div class="form-group mb-2">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-user"></i></span>
+									<input id="user" type="text" class="form-control" name="name" placeholder="Enter name" required="required" autocomplete="on">
+								</div>
+							</div>
+							<div class="form-group mb-4">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+									<input id="email" type="email" class="form-control" name="email" placeholder="Enter email address" required="required">
+								</div>
+							</div>
+							<div class="form-group text-center">
+								<button id="submit" type="submit" class="btn btn-primary btn-signin">submit</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function getCaptchaToken(callback) {
+			grecaptcha.enterprise.ready(() => {
+				grecaptcha.enterprise.execute('{{ .SiteKey }}', {action: 'submit'}).then((token) => {
+					callback(token)
+				});;
+			});
+        }
+
+		function btnLoading(elem) {
+			$(elem).attr('data-original-text', $(elem).html());
+			$(elem).prop('disabled', true);
+			$(elem).html('<i class="spinner-border spinner-border-sm"></i> Submitting...');
+	    }
+    
+		function btnReset(elem) {
+			$(elem).prop("disabled", false);
+			$(elem).html($(elem).attr('data-original-text'));
+		}
+
+		$(document).ready(function() {
+			$('#submit').on('click', function(){
+				var $this = $(this);
+				const $form = $('#user-form')[0];
+				btnLoading($this);
+				// Validate the form
+				if($form.checkValidity()) {
+					// Looks all good proceed
+					const $userName = $('#user').val();
+					const $userEmail = $('#email').val();
+
+					getCaptchaToken(function(token){
+						fetch('{{ .BackendHostApi }}', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'x-api-key': '{{ .ApiKey }}',
+								'x-recaptcha-token': token
+							},
+							body: JSON.stringify({
+								name: $userName,
+								email: $userEmail
+							})
+						})
+						.then((resp) => resp.json())
+						.then((result) => {
+							btnReset($this);
+							if(result.Code === 200) {
+								alert('Successfully submitted')
+							} else {
+								alert('Go away bot !')
+							}
+						})
+						.catch((error) => {
+							btnReset($this);
+							alert('Unhandled error')
+						});
+					});
+				} else {
+					$form.reportValidity();
+					btnReset($this);
+				 	event.preventDefault();
+ 				}
+			});
+        });
+	</script>
+</body>
+</html>

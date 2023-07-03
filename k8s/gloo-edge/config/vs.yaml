@@ -1,0 +1,29 @@
+apiVersion: gateway.solo.io/v1
+kind: VirtualService
+metadata:
+  name: auth-tutorial
+  namespace: gloo-system
+spec:
+  virtualHost:
+    domains:
+      - '*'
+    routes:
+      - matchers:
+          - prefix: /submit
+        routeAction:
+          single:
+            upstream:
+              name: recaptcha-backend-upstream
+              namespace: gloo-system
+        options:
+          extauth:
+            configRef:
+              name: passthrough-auth
+              namespace: gloo-system
+      - matchers:
+          - prefix: /
+        routeAction:
+          single:
+            upstream:
+              name: recaptcha-client-upstream
+              namespace: gloo-system
