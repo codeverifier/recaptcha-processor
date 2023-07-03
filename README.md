@@ -62,4 +62,5 @@ TODO
 ## Future Improvements
 
 - CI automatation to build Docker images
+- Unit tests
 - Move to using `nerdctl`
