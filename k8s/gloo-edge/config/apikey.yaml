@@ -8,3 +8,5 @@ metadata:
     team: test
 data:
   api-key: TjJZd01ESXhaVEV0TkdVek5TMWpOemd6TFRSa1lqQXRZakUyWXpSa1pHVm1OamN5
+  # Adding site key as metadata (base64 encoded)
+  site-key: <add site key as base64 encoded>

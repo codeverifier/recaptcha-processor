@@ -9,15 +9,21 @@ spec:
     - name: apiKey
       apiKeyAuth:
         headerName: x-api-key
+        headersFromMetadataEntry:
+          x-site-key:
+            name: site-key
+            required: true
         labelSelector:
           team: test
     - name: captchaProc
       passThroughAuth:
         http:
-          # Address of the http auth server to query
+          # Address of the recaptcha verification service
           url: http://recaptcha-processing-server.recaptcha.svc.cluster.local:9001/captcha-verify
           # Set a connection timeout to external service, default is 5 seconds
           connectionTimeout: 3s
           request:
             allowedHeaders:
               - x-recaptcha-token
+            # Pass through any metadata as state
+            passThroughState: true

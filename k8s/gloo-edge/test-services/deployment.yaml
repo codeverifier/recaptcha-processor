@@ -46,7 +46,7 @@ spec:
             - name: SERVER_PORT
               value: "8090"
             - name: CAPTCHA_SITE_KEY
-              value: 6Lc0G9wmAAAAAM0Gm7vvm3JYG52sKlMaNpFTSl0Y
+              value: <add site key here>
             - name: BACKEND_HOST_API
               value: "http://192.168.106.224/submit"
             - name: API_KEY

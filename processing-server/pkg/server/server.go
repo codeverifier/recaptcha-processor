@@ -82,11 +82,11 @@ func (lw *loggerWrapper) getCaptchaVerify() *captcha.CaptchaVerifyOptions {
 		// https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
 		captchaOptions.GoogleProjectId = lw.getEnvVarOrError("GOOGLE_ADC_PROJECT_ID")
 		// https://cloud.google.com/recaptcha-enterprise/docs/create-assessment#create_API_client_libraries
-		captchaOptions.SiteKey = lw.getEnvVarOrError("CAPTCHA_SITE_KEY")
+		//captchaOptions.SiteKey = lw.getEnvVarOrError("CAPTCHA_SITE_KEY")
 	} else {
 		captchaOptions.GoogleApi = lw.getEnvVarOrError("VERIFY_CAPTCHA_GOOGLE_API")
 		// https://developers.google.com/recaptcha/docs/verify#api_request
-		captchaOptions.SharedKey = lw.getEnvVarOrError("CAPTCHA_SHARED_KEY")
+		//captchaOptions.SharedKey = lw.getEnvVarOrError("CAPTCHA_SHARED_KEY")
 	}
 	captchaOptions.Threshold = lw.getFloatOrDefault("ACCEPTABLE_SCORE_THRESHOLD", defaultThreshold)
 	return captchaOptions

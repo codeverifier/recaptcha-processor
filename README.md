@@ -65,4 +65,4 @@ TODO
 
 - CI automatation to build Docker images
 - Unit tests
-- Move to using `nerdctl`
+- Migrate to using `nerdctl` instead of `docker`
