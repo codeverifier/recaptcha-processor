@@ -9,7 +9,7 @@ This provides a [client](test/client/README.md) and a [backend service](test/bac
 
 Refer to the diagram below for the flow of requests.
 
-![reCAPTCHA Request Flow](https://github.com/pseudonator/recaptcha-processor/assets/2648624/5a309d23-469a-49fc-b053-5809ef47b6b9)
+![reCAPTCHA Request Flow](https://github.com/pseudonator/recaptcha-processor/assets/2648624/63602e7d-a2dd-4d4b-9604-aa37c336d668)
 
 ## Building
 
